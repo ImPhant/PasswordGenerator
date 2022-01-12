@@ -1,79 +1,76 @@
-import random
+import random, json, sys
 
-def start():
-    alphabet_low = 'abcdefghijklmnopqrstuvwxyz'
-    alphabet_cap = alphabet_low.upper()
-    numbers = '0123456789'
-    simbols = '!@#$%&*()-_=+[]{}/?'
-    all = [alphabet_low, alphabet_cap, numbers, simbols]
+with open('config.json') as f:
+    config = json.load(f)['config']
 
-    print('Welcome to password generator!')
+alphabet_low = config['alphabet_low']
+alphabet_cap = config['alphabet_cap']
+num = config['num']
+simbols = config['simbols']
 
-    def get_info1(warn=False):
-        if warn is False:
-            info1 = input('How many digits do you want in your password?\n')
-        else:
-            info1 = input('Type a valid number!\n')
+def script_help():
+    print('\----------------------------------------------------------------/')
+    print('|                              Help                              |')
+    print('##################################################################')
+    print('| Params:  Allow numbers (-n)                                    |')
+    print('|          Allow simbols (-s))                                   |')
+    print('| Caution: The first param must be the password lenght (number)! |')
+    print('| Example: python3 ./main.py 15 -n -s                            |')
+    print('##################################################################\n')
+
+try:
+    first_arg = sys.argv[1]
+except Exception as error:
+    print('Error: not enough params\n')
+    script_help()
+    quit()
+
+
+allow_num = False
+allow_simbols = False
+
+for arg in sys.argv:
+    if arg == '-n':
+        allow_num = True
+    elif arg == '-s':
+        allow_simbols = True
+
+if first_arg.isnumeric() is False:
+    if first_arg == '-h':
+        print('\nThis project was developed by Phant, you can discuss and suggest changes at: https://github.com/ImPhant/PasswordGenerator \n')
+        script_help()
+        quit()
         
-        if info1.isnumeric():
-            return info1
-        else:
-            get_info1(True)
-
-    def get_info2(warn=False):
-        if warn is False:
-            info2 = input('Do you want numbers in the password? [Y, N]\n')
-        else:
-            info2 = input('Type "Y" for yes or "N" for no!\n')
-        
-        if info2.lower() in ('y', 'n'):
-            return info2.lower()
-        else:
-            get_info2(True)
-
-    def get_info3(warn=False):
-        if warn is False:
-            info3 = input('Do your want especial digits on the password? [Y, N]\n')
-        else:
-            info3 = input('Type "Y" for yes or "N" for no!\n')
-        
-        if info3.lower() in ('y', 'n'):
-            return info3.lower()
-        else:
-            get_info3(True)
-
-    info1 = get_info1()
-    info2 = get_info2()
-    info3 = get_info3()
-
-    password = ''
-    if info2 == 'y':
-        if info3 == 'y':
-            for a in range(int(info1)):
-                character_type = random.choice(all)
-                password += random.choice(character_type)
-        else:
-            all.pop(3)
-            for a in range(int(info1)):
-                character_type = random.choice(all)
-                password += random.choice(character_type)
-
     else:
-        all.pop(2)
-        if info3 == 'y':
-            for a in range(int(info1)):
-                character_type = random.choice(all)
-                password += random.choice(character_type)
-        else:
-            all.pop(2)
-            for a in range(int(info1)):
-                character_type = random.choice(all)
-                password += random.choice(character_type)
+        print('Error: invalid pass_len\n')
+        script_help()
+        quit()
+
+print('##################################\n| Welcome to password generator! |\n##################################\n')
+
+def create_pass(lenght, allow_num, allow_sim):
+    password = ''
+
+    if allow_num is True:
+        if allow_sim is True:
+            all = [alphabet_low, alphabet_cap, num, simbols]
         
-    print(password)
+        else:
+            all = [alphabet_low, alphabet_cap, num]
+    
+    else:
+        if allow_sim is True:
+            all = [alphabet_low, alphabet_cap, simbols]
 
-    repeat = input('Do you want to repeat? [Y]\n')
-    if repeat.lower() == 'y':
-        start()
+        else:
+            all = [alphabet_low, alphabet_cap]
+    
+    for _ in range(0, lenght):
+        character_type = random.choice(all)
+        password += random.choice(character_type)
+    
+    print(f'Your password is: {password}\n\n')
+    print('Thanks for using this project, here is the repository: https://github.com/ImPhant/PasswordGenerator')
 
-start()
+
+create_pass(int(first_arg), allow_num, allow_simbols)
