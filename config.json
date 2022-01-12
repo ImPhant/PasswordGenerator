@@ -1,0 +1,8 @@
+{
+    "config": {
+        "alphabet_low": "abcdefghijklmnopqrstuvwxyz",
+        "alphabet_cap": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "num": "0123456789",
+        "simbols": "!@#$%&*()-_=+[]{}/?;:<>.,"
+    }
+}
